@@ -114,10 +114,11 @@ class PricingRegistry {
    */
   public register(provider: string, model: string, pricing: ModelPricing): void {
     const normalizedProvider = provider.toLowerCase();
+    const normalizedModel = model.toLowerCase();
     if (!this.pricing.has(normalizedProvider)) {
       this.pricing.set(normalizedProvider, new Map());
     }
-    this.pricing.get(normalizedProvider)!.set(model, pricing);
+    this.pricing.get(normalizedProvider)!.set(normalizedModel, pricing);
   }
 
   /**
@@ -126,12 +127,13 @@ class PricingRegistry {
    */
   public getPricing(provider: string, model: string): ModelPricing {
     const normalizedProvider = provider.toLowerCase();
+    const normalizedModel = model.toLowerCase();  
     const providerPricing = this.pricing.get(normalizedProvider);
     if (!providerPricing) {
       throw new Error(`TokenFirewall: No pricing found for provider "${provider}"`);
     }
 
-    const modelPricing = providerPricing.get(model);
+    const modelPricing = providerPricing.get(normalizedModel);
     if (!modelPricing) {
       throw new Error(`TokenFirewall: No pricing found for model "${model}" from provider "${provider}"`);
     }
@@ -144,7 +146,8 @@ class PricingRegistry {
    */
   public hasPricing(provider: string, model: string): boolean {
     const normalizedProvider = provider.toLowerCase();
-    return this.pricing.get(normalizedProvider)?.has(model) ?? false;
+    const normalizedModel = model.toLowerCase(); 
+    return this.pricing.get(normalizedProvider)?.has(normalizedModel) ?? false;
   }
 }
 
